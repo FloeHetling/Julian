@@ -1,0 +1,9 @@
+modSocketMaster = 0, 0, 0, 0, C
+CSocketMaster = 0, 0, 0, 0, C
+modMain = 216, 92, 1236, 602, 
+modWinAPI = 0, 0, 0, 0, C
+modSyslog = 0, 0, 0, 0, C
+frmMain = 50, 50, 1070, 567, C, 75, 75, 1095, 592, C
+modLogger = 250, 250, 1270, 767, C
+modCURL = 0, 0, 1020, 517, C
+modRegistry = 25, 25, 1045, 542, C

@@ -33,7 +33,9 @@ Option Explicit
     Public EMailSubject As String, MailReport As String
     Public SMTPServer As String, SMTPPort As String
     Public FromEmail As String, ToEmail As String
-
+    
+''Прочие переменные
+    Public JulianFullPath As String
 
 Sub Main()
 'PCNAME
@@ -54,6 +56,9 @@ LogFile = App.Path & "\JULIAN.log"
 
 'INIFILE
 INIFile = App.Path & "\JULIAN.ini"
+
+'JULIANFULLPATH
+JulianFullPath = """" & App.Path & "\" & App.EXEName & ".exe"""
 
     If CheckPath(INIFile) <> True Then
             WriteToLog " "
@@ -93,7 +98,7 @@ Dim msgHelp As String
 
         msgHelp = _
         JulianVer & vbCrLf & vbCrLf & _
-        "HOTFIX II" & vbCrLf & vbCrLf & _
+        "HOTFIX III" & vbCrLf & vbCrLf & _
         "Допустимые параметры командной строки:" & vbCrLf & vbCrLf & _
         "/ipservice - URL сервиса проверки ip." & vbCrLf & _
         "По умолчанию - http://icanhazip.com" & vbCrLf & _
@@ -111,12 +116,12 @@ Dim msgHelp As String
         CLIArg = Command$
         If CLIArg = "/?" Then
                 MsgBox msgHelp, vbInformation, "Справка"
-                MsgBox "HOTFIX II:" & vbCrLf & _
-                        "Из-за лимита модуля Timer на количество миллисекунд" & vbCrLf & _
-                        "программа переведена на отсчет времени в секундах." & vbCrLf & _
-                        "Вся информация скорректирована. В ini файл теперь" & vbCrLf & _
-                        "тоже вводятся секунды. Переменная типа Long должна" & vbCrLf & _
-                        "отработать с запасом.", vbInformation, JulianVer
+                MsgBox "HOTFIX III:" & vbCrLf & _
+                        "Добавлен автозапуск под Windows." & vbCrLf & _
+                        "Ориентируется на текущее местоположение программы." & vbCrLf & _
+                        "Корректируется при запуске ПО." & vbCrLf & _
+                        "Проверяет, записалось ли значение после коррекции." & vbCrLf & _
+                        "Результаты пишет в лог.", vbInformation, JulianVer
                 End
         End If
 
@@ -264,4 +269,25 @@ Public Function CheckPath(strPath As String) As Boolean
     Else
         CheckPath = False
     End If
+End Function
+
+Public Function writeAutorunRegistry()
+'Скипаем функцию если будет какая-то ошибка
+On Error GoTo FAIL
+Call fWriteValue("HKCU", "Software\Microsoft\Windows\CurrentVersion\Run", App.EXEName, "S", JulianFullPath)
+FAIL:
+End Function
+
+Public Function checkAutorunRegistry()
+'Скипаем функцию если будет какая-то ошибка
+On Error GoTo FAIL
+Dim strCheckResult As String
+Call fReadValue("HKCU", "Software\Microsoft\Windows\CurrentVersion\Run", App.EXEName, "S", "NA", strCheckResult)
+    If strCheckResult <> "NA" Then
+        WriteToLog "Включен автозапуск при старте Windows"
+    Else
+        WriteToLog "В реестре не найден ключ автозапуска. Вероятно, для записи не хватило прав."
+        WriteToLog "", StartNewReport
+    End If
+FAIL:
 End Function

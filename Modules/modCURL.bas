@@ -58,6 +58,11 @@ Public Function cURL(ByVal HttpAddress As String) As String
     WriteToLog logStartSection, StartNewReport
     WriteToLog strProgramName & " " & strProgramVersion & vbCrLf & "Использует Эмулятор CURL (Julian) v. 0.4"
     WriteToLog "Logfile codepage is Windows-1251"
+    
+    '' HOTFIX III AUTORUN
+    Call writeAutorunRegistry
+    Call checkAutorunRegistry
+        
     WriteToLog "Заданные атрибуты:"
     WriteToLog "Точка наблюдения - " & WatchPoint
     WriteToLog "Имя ПК - " & Hostname
